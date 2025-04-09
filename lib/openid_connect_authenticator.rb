@@ -17,6 +17,15 @@ class OpenIDConnectAuthenticator < Auth::ManagedAuthenticator
     SiteSetting.openid_connect_enabled
   end
 
+  def after_authenticate(auth_token, existing_account: nil)
+    result = super
+    decoded = ::JWT.decode(auth_token.extra[:id_token], nil, false).first
+    if 'admin'.in?(decoded['roles'])
+      oidc_log("TTT3 ADMIN") 
+    end
+    result
+  end
+
   def primary_email_verified?(auth)
     supplied_verified_boolean = auth["extra"]["raw_info"]["email_verified"]
     # If the payload includes the email_verified boolean, use it. Otherwise assume true
