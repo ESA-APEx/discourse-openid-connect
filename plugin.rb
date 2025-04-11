@@ -3,7 +3,7 @@
 # name: discourse-openid-connect
 # about: Allows users to login to your forum using an OpenID Connect provider as authentication.
 # meta_topic_id: 103632
-# version: 1.0
+# version: 1.1
 # authors: David Taylor
 # url: https://github.com/discourse/discourse-openid-connect
 

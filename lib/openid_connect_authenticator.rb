@@ -17,9 +17,8 @@ class OpenIDConnectAuthenticator < Auth::ManagedAuthenticator
     SiteSetting.openid_connect_enabled
   end
 
-
   def provides_groups?
-    true
+    SiteSetting.openid_connect_roles_claim_name
   end
 
   def set_admin!(user, associated_groups)
@@ -46,8 +45,8 @@ class OpenIDConnectAuthenticator < Auth::ManagedAuthenticator
 
     associated_groups=[]
     decoded = ::JWT.decode(auth_token.extra[:id_token], nil, false).first
-    if decoded['roles']
-      roles = decoded['roles']
+    if decoded[SiteSetting.openid_connect_roles_claim_name]
+      roles = decoded[SiteSetting.openid_connect_roles_claim_name]
       associated_groups = roles.map.with_index { |role, id| {id: (100 + id).to_s, name: role} }
     end
     result.associated_groups = associated_groups

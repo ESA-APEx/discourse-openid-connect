@@ -35,3 +35,7 @@ discourse_openid_connect:
     textarea: true
   openid_connect_match_by_email:
     default: true
+  openid_connect_use_pkce:
+    default: false
+  openid_connect_roles_claim_name:
+    default: "roles"
