@@ -37,3 +37,5 @@ discourse_openid_connect:
     default: true
   openid_connect_use_pkce:
     default: false
+  openid_connect_roles_claim_name:
+    default: "roles"
