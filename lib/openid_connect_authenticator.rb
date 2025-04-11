@@ -17,12 +17,46 @@ class OpenIDConnectAuthenticator < Auth::ManagedAuthenticator
     SiteSetting.openid_connect_enabled
   end
 
+
+  def provides_groups?
+    true
+  end
+
+  def set_admin!(user, associated_groups)
+    if associated_groups.any? {|group| group["name"] == "admin" } or associated_groups.any? {|group| group[:name] == "admin" }
+      if user.admin != true
+        oidc_log("Assoiated groups contain admin, granting admin to user")
+        user.grant_admin!
+      end
+    else
+      if user.admin == true
+        oidc_log("Assoiated groups don't contain admin so removing as an admin")
+        user.revoke_admin!
+      end
+    end
+  end
+
+  def after_create_account(user, auth)
+    associated_groups = auth.associated_groups
+    set_admin!(user, associated_groups)
+  end
+
   def after_authenticate(auth_token, existing_account: nil)
     result = super
+
+    associated_groups=[]
     decoded = ::JWT.decode(auth_token.extra[:id_token], nil, false).first
-    if 'admin'.in?(decoded['roles'])
-      oidc_log("TTT3 ADMIN") 
+    if decoded['roles']
+      roles = decoded['roles']
+      associated_groups = roles.map.with_index { |role, id| {id: (100 + id).to_s, name: role} }
     end
+    result.associated_groups = associated_groups
+
+    if result.user
+      user = result.user
+      set_admin!(user, associated_groups)
+    end
+
     result
   end
 
