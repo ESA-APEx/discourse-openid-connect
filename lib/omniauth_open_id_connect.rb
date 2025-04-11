@@ -161,6 +161,8 @@ module ::OmniAuth
               verify_not_before: true,
               verify_iat: false,
               verify_jti: false,
+              required_claims: ['roles'],
+              verify_required_claims: true,
             )
 
             if decoded["nonce"].nil? || decoded["nonce"].empty? ||
