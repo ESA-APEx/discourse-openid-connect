@@ -39,3 +39,5 @@ discourse_openid_connect:
     default: false
   openid_connect_roles_claim_name:
     default: "roles"
+  openid_connect_verify_required_claims:
+    default: false
