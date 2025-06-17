@@ -161,8 +161,8 @@ module ::OmniAuth
               verify_not_before: true,
               verify_iat: false,
               verify_jti: false,
-              required_claims: ['roles'],
-              verify_required_claims: true,
+              required_claims: [].append(SiteSetting.openid_connect_roles_claim_name),
+              verify_required_claims: SiteSetting.openid_connect_verify_required_claims?,
             )
 
             if decoded["nonce"].nil? || decoded["nonce"].empty? ||
