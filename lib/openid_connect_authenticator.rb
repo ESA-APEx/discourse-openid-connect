@@ -47,7 +47,10 @@ class OpenIDConnectAuthenticator < Auth::ManagedAuthenticator
     decoded = ::JWT.decode(auth_token.extra[:id_token], nil, false).first
     if decoded[SiteSetting.openid_connect_roles_claim_name]
       roles = decoded[SiteSetting.openid_connect_roles_claim_name]
-      associated_groups = roles.map.with_index { |role, id| {id: (100 + id).to_s, name: role} }
+      # The id must be stable per role: Discourse stores associated groups with a
+      # unique (provider_name, provider_id), so an id based on the position of the
+      # role in the claim collides as soon as users have different first roles.
+      associated_groups = roles.map { |role| {id: role.to_s, name: role.to_s} }
     end
     result.associated_groups = associated_groups
 
